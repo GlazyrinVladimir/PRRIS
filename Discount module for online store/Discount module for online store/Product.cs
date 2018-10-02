@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DiscountModuleForOnlineStore
 {
-    class Product
+    public class Product
     {
         //конструктор нового продукта
         public Product(string name, float price)

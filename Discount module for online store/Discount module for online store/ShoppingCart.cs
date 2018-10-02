@@ -13,6 +13,7 @@ namespace DiscountModuleForOnlineStore
         {
             productsList = new List<Product>();
             productsNamesList = new List<string>();
+            productsWithoutDiscount = new List<string>();
         }
         //добавить продукт в корзину
         public void Add(Product obj)
@@ -35,10 +36,13 @@ namespace DiscountModuleForOnlineStore
                 //проверка каждого продукта на участие в скидке
                 if (!productsWithoutDiscount.Contains(p.GetProductName()))
                 {
+                    Console.WriteLine(p.GetProductName() + " " + p.GetPrice() * (1 - m_discount));
                     value += p.GetPrice() * (1 - m_discount);
                 }
                 else
                 {
+                    Console.WriteLine(p.GetProductName() + " " + p.GetPrice());
+
                     value += p.GetPrice();
                 }
             }

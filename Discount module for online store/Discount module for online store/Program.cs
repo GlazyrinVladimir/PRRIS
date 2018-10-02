@@ -25,12 +25,11 @@ class Program
         Shop shop = new Shop();
 
         //пример добавления продуктов в корзину
-        shop.AddProductToShoppingCart(E);
-        shop.AddProductToShoppingCart(E);
-        shop.AddProductToShoppingCart(F);
-        shop.AddProductToShoppingCart(F);
-        shop.AddProductToShoppingCart(G);
-        shop.AddProductToShoppingCart(G);
+        shop.AddProductToShoppingCart(A);
+        shop.AddProductToShoppingCart(A);
+        shop.AddProductToShoppingCart(B);
+        shop.AddProductToShoppingCart(B);
+        shop.AddProductToShoppingCart(A);
 
         //получение цены продуктов с учетом скидок
         float price = shop.GetSummaryPrice();

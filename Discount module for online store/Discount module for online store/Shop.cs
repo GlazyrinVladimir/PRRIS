@@ -8,7 +8,7 @@ using System.Collections;
 using System.Xml;
 namespace DiscountModuleForOnlineStore
 {
-    class Shop
+    public class Shop
     {
         //конструктор магазина
         public Shop()
@@ -21,7 +21,7 @@ namespace DiscountModuleForOnlineStore
         void LoadRules()
         {
             XmlDocument xDoc = new XmlDocument();
-            xDoc.Load("rules.xml");
+            xDoc.Load("../../rules.xml");
             XmlElement xRoot = xDoc.DocumentElement;
             foreach (XmlNode xnode in xRoot)
             {
@@ -36,7 +36,7 @@ namespace DiscountModuleForOnlineStore
             {
                 r.CheckRuleForAvailable(m_shoppingCart);                
             }
-            return m_shoppingCart.GetProductsPrice();
+            return (float)Math.Round(m_shoppingCart.GetProductsPrice(), 2);// Math.Round(m_shoppingCart.GetProductsPrice(), 2);
         }
         //добавление продукта в объект корзины
         public void AddProductToShoppingCart(Product p)
