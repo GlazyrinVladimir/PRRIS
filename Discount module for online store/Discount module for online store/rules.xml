@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rules> 
+
+  <rule type="buy all">   
+    <productsInRule>" A B "</productsInRule>
+    <productsNotInRule>""</productsNotInRule>
+    <discount>10</discount>
+  </rule>
+
+  <rule type="buy all">   
+    <productsInRule>" D E "</productsInRule>
+    <productsNotInRule>""</productsNotInRule>
+    <discount>5</discount>
+  </rule>
+
+  <rule type="buy all">   
+    <productsInRule>" E F G "</productsInRule>
+    <productsNotInRule>""</productsNotInRule>
+    <discount>5</discount>
+  </rule>
+
+  <rule type="buy all">   
+    <productsInRule>" A K "</productsInRule>
+    <productsNotInRule>" A "</productsNotInRule>
+    <discount>5</discount>
+  </rule>
+
+  <rule type="buy all">   
+    <productsInRule>" A L "</productsInRule>
+    <productsNotInRule>" A "</productsNotInRule>
+    <discount>5</discount>
+  </rule>
+
+  <rule type="buy all">   
+    <productsInRule>" A M "</productsInRule>
+    <productsNotInRule>" A "</productsNotInRule>
+    <discount>5</discount>
+  </rule>
+
+  <rule type="buy more">   
+    <amount>3</amount>
+    <discount>5</discount>
+	<productsNotInRule>" A C "</productsNotInRule>
+  </rule>
+
+  <rule type="buy more">   
+    <amount>4</amount>
+    <discount>10</discount>
+	<productsNotInRule>" A C "</productsNotInRule>
+  </rule>  
+
+  <rule type="buy more">   
+    <amount>5</amount>
+    <discount>20</discount>
+	<productsNotInRule>" A C "</productsNotInRule>
+  </rule>
+
+</rules>
