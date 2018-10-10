@@ -6,16 +6,29 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
 
-//тест с текстом весом в ~100мб проходит за ~ 4 секунды
-//тест с текстом весом в ~60мб проходит за ~ 2.7 секунды
-//тест с текстом весом в ~30мб проходит за ~ 1.4 секунды
-//тест с текстом весом в ~15мб проходит за ~ 0.7 секунды
+//тест с текстом весом в ~100мб проходит за ~ 8.5 секунды
+//тест с текстом весом в ~60мб проходит за ~ 5.5 секунды
+//тест с текстом весом в ~30мб проходит за ~ 2.7 секунды
+//тест с текстом весом в ~15мб проходит за ~ 1.2 секунды
 
 namespace algorithmic_task_1
 {
-    class Program
+    public class Program
     {
-        int SearchMaxAndMinLength(List<string> list, string s1, string s2)
+        void UpdateParams(ref int s1, ref int s2, int i)
+        {
+            if (s1 == -1)
+            {
+                s1 = i;
+                s2 = i;
+            }
+            else
+            {
+                s2 = i;
+            }
+        }
+
+        public KeyValuePair<int, int> SearchMaxAndMinLength(List<string> list, string s1, string s2)
         {
             int s1First = -1;
             int s2First = -1;
@@ -25,56 +38,34 @@ namespace algorithmic_task_1
             int maxLength = -1;
             int minLength = list.Count;
 
+            s1 = s1.ToLower();
+            s2 = s2.ToLower();
+
             for (int i = 0; i < list.Count; i++)
             {
                 if (list[i] == s1)
                 {
-                    if (s1First == -1)
-                    {
-                        s1First = i;
-                        s1End = i;
-                    }
-                    else
-                    {
-                        s1End = i;
-                    }
-
-                    if (s1End > -1 && s2End > -1 && minLength > Math.Abs(s1End - s2End))
-                    {
-                        minLength = Math.Abs(s1End - s2End);
-                    }
+                    UpdateParams(ref s1First, ref s1End, i);
                 }
 
                 if (list[i] == s2)
                 {
-                    if (s2First == -1)
-                    {
-                        s2First = i;
-                        s2End = i;
-                    }
-                    else
-                    {
-                        s2End = i;
-                    }
-
-
-                    if (s1End > -1 && s2End > -1 && minLength > Math.Abs(s1End - s2End))
-                    {
-                        minLength = Math.Abs(s1End - s2End);
-                    }
+                    UpdateParams(ref s2First, ref s2End, i);
+                }
+                if (s1End > -1 && s2End > -1 && minLength > Math.Abs(s1End - s2End))
+                {
+                    minLength = Math.Abs(s1End - s2End);
                 }
             }
-            maxLength = Math.Abs(s1First - s2End);
-            if (Math.Abs(s1First - s2End) > Math.Abs(s1End - s2First))
+            if (s1First > -1 && s2End > -1 && s1First > -1 && s2First > -1)
             {
                 maxLength = Math.Abs(s1First - s2End);
+                if (maxLength < Math.Abs(s2First - s1End))
+                {
+                    maxLength = Math.Abs(s2First - s1End);
+                }
             }
-            else
-            {
-                maxLength = Math.Abs(s1End - s2First);
-            }
-            Console.WriteLine((maxLength - 1) + " " + (minLength - 1));
-            return 0;
+            return new KeyValuePair<int, int> (maxLength - 1, minLength - 1);
         }
 
         public void FillList(string line, List<string> list)
@@ -83,7 +74,7 @@ namespace algorithmic_task_1
 
             foreach (string word in words)
             {
-                list.Add(word);
+                list.Add(word.ToLower());
             }
         }
 
@@ -98,7 +89,7 @@ namespace algorithmic_task_1
                 sLine = objReader.ReadLine();
                 if (sLine != null)
                 {
-                    FillList(sLine, list);
+                    FillList(sLine.ToLower(), list);
                 }
             }
             objReader.Close();
@@ -111,13 +102,23 @@ namespace algorithmic_task_1
 
             Program p = new Program();
             Stopwatch sw = new Stopwatch();
-            sw.Start();           
+            sw.Start();
             List<string> list = p.LoadText();
-            p.SearchMaxAndMinLength(list, "day", "Today");
-            sw.Stop();
-            TimeSpan ts = sw.Elapsed;
+       //     p.FillList(s, list);
 
-            // Format and display the TimeSpan value.
+            KeyValuePair<int, int> answer = p.SearchMaxAndMinLength(list, "Today", "day");
+            sw.Stop();
+
+            TimeSpan ts = sw.Elapsed;
+            if (answer.Value == list.Count && answer.Key == -1)
+            {
+                Console.WriteLine("not found");
+            }
+            else
+            {
+                Console.WriteLine((answer.Key) + " " + (answer.Value));
+            }
+
             string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
                 ts.Hours, ts.Minutes, ts.Seconds,
                 ts.Milliseconds / 10);
