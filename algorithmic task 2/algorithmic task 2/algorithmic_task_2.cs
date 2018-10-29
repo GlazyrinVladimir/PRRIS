@@ -9,38 +9,6 @@ namespace algorithmic_task_2
 {
     class Program
     {
-        //добавление имени в словарь
-        void AddNewName(string s)
-        {
-            //проверка на существование ключа первой буквы добавляемого слова
-            if (!m_notebook.ContainsKey(s[0]))
-            {
-                //создание новой пары ключ - значение первой буквы переменной s, список - пустой
-                m_notebook.Add(s[0], new List<string>());
-            }
-            //добавляем новое значение по ключу первой буквы переменной s
-            m_notebook[s[0]].Add(s);
-
-        }
-        //функция получения числа слов начинающихся со значения переменной word
-        int GetValueOfWordIncidence(string word)
-        {
-            int count = 0;
-            //проверка на существование ключа
-            if (m_notebook.ContainsKey(word[0]))
-            {
-                //получение списка строк со словами начинающихся на букву искомого слова
-                List<string> partOfNote = m_notebook[word[0]];
-                foreach (string s in partOfNote)
-                {
-                    //если слово из списка начинается с искомого слова, то увеличиваем счетчик
-                    if (s.IndexOf(word) == 0)
-                        count++;
-                }
-            }
-            return count;
-        }
-
         static void Main(string[] args)
         {
             string a = "alex";
@@ -60,31 +28,22 @@ namespace algorithmic_task_2
             string a14 = "akakii";
             string a15 = "julia";
 
-            string b = "alex";
+            string b = "al";
 
-            Program p = new Program();
-            p.AddNewName(a);
-            p.AddNewName(a1);
-            p.AddNewName(a2);
-            p.AddNewName(a3);
-            p.AddNewName(a4);
-            p.AddNewName(a5);
-            p.AddNewName(a6);
-            p.AddNewName(a7);
-            p.AddNewName(a8);
-            p.AddNewName(a9);
-            p.AddNewName(a10);
-            p.AddNewName(a11);
-            p.AddNewName(a12);
-            p.AddNewName(a13);
-            p.AddNewName(a14);
-            p.AddNewName(a15);
+            //создаем объект типа записная книжка и добавляем новые записи
+            Notebook notebook = new Notebook();
+            notebook.Add(a);
+            notebook.Add(a1);
+            notebook.Add(a2);
+            notebook.Add(a3);
+            notebook.Add(a4);
+            notebook.Add(a5);
+            notebook.Add(a13);
+            notebook.Add(a14);
 
-            Console.WriteLine("Find " + b + " -> " + p.GetValueOfWordIncidence(b));
+            //получаем и выводим количество имен начинающихся на слово b
+            Console.WriteLine(notebook.GetWordsStartWithWordCount(b));
             Console.ReadKey();
         }
-
-        Dictionary<char, List<string>> m_notebook = new Dictionary<char, List<string>>();
-
     }
 }
