@@ -7,194 +7,123 @@ using System.Xml;
 
 namespace DiscountModuleForOnlineStore
 {
-    //перечисление типов правил. buymorethan - правило покупки больше какого-то числа, buyitall - правило покупки всех товаров из списка
-    enum RuleType { BuyMoreThan, BuyItAll };
 
-    class Rule
+    public class RulesController
     {
-        //конструктор правила
-        public Rule(XmlNode node)
+        //конструктор
+        public RulesController()
         {
-            if (node.Attributes.Count > 0)
+            rules = new List<IRule>();
+        }
+        //добавление новой акции
+        public void AddRule(IRule rule)
+        {
+            rules.Add(rule);
+        }
+        //установка всех скидок к данной тележке
+        public void SetAllDiscounts(ref ShoppingCart cart)
+        {
+            foreach (IRule rule in rules)
             {
-                XmlNode attr = node.Attributes.GetNamedItem("type");
-                if (attr != null)
+                rule.SetDiscountOnProducts(ref cart);
+            }
+        }
+        //список всех скидок
+        List<IRule> rules;
+    }
+
+    //интерфейс для классов типа правил
+    public class IRule
+    {
+        //виртуальный метод установления скидки на продукты
+        public virtual void SetDiscountOnProducts(ref ShoppingCart cart) { }
+        //скидка
+        public IDiscount m_discount;
+        //список с продуктами, которые не участвуют в скидке
+        public List<Product> m_productsNotInDiscount;
+    }
+
+    //класс для скидок типа купи каждый продукт из списка
+    public class RuleBuyItAll : IRule
+    {
+        //конструктор
+        public RuleBuyItAll(IDiscount discount, List<Product> productsInDiscount, List<Product> productsNotInDiscount)
+        {
+            m_discount = discount;
+            m_productsNotInDiscount = productsNotInDiscount;
+            m_productsInDiscount = productsInDiscount;
+        }
+        //переопределенный метод установления скидок
+        public override void SetDiscountOnProducts(ref ShoppingCart cart)
+        {
+            while (isRuleAvailable(ref cart)) ;
+        }
+        //проверка на выполнение правила для данной корзины
+        bool isRuleAvailable(ref ShoppingCart cart)
+        {
+            List<Product> products = cart.GetProductsList();
+            //список для хранения объектов продуктов, которые участвуют в скидке
+            List<Product> availableProducts = new List<Product>();
+            //каждый продукт из списка продуктов участвующих в скидке
+            foreach (Product p in m_productsInDiscount)
+            {
+                //и каждый продукт из корзины 
+                for (int i = 0; i < products.Count; i++)
                 {
-                    m_productsNotInDiscount = new List<string>();
-                    //выбор какое правило получено
-                    switch (attr.Value)
+                    //сравниваются, если это одинаковые продукты и продукт из корзины не участвует в акции, то его добавляем в список
+                    if (p.GetProductName() == products[i].GetProductName() && !products[i].GetUsageInDiscount())
                     {
-                        case "buy more":
-                            {
-                                FillParamsForTypeBuyMoreThan(node);
-                                break;
-                            }
-                        case "buy all":
-                            {
-                                FillParamsForTypeBuyAll(node);
-                                break;
-                            }
-                    }
-
-                }
-            }
-        }
-        //заполнение параметров для правил типа buyitall
-        void FillParamsForTypeBuyAll(XmlNode node)
-        {
-            m_rType = RuleType.BuyItAll;
-            m_productsInDiscount = new List<string>();
-
-            foreach (XmlNode childnode in node.ChildNodes)
-            {
-                switch (childnode.Name)
-                {
-                    case "productsInRule":
-                        {
-                            FillList(m_productsInDiscount, childnode.InnerText);
-                            break;
-                        }
-                    case "productsNotInRule":
-                        {
-                            FillList(m_productsNotInDiscount, childnode.InnerText);
-                            break;
-                        }
-                    case "discount":
-                        {
-                            m_discount = Convert.ToInt32(childnode.InnerText);
-                            break;
-                        }
-                }
-            }
-        }
-        //заполнение параметров для правил типа buymorethan
-        void FillParamsForTypeBuyMoreThan(XmlNode node)
-        {
-            m_rType = RuleType.BuyMoreThan;
-
-            foreach (XmlNode childnode in node.ChildNodes)
-            {
-                switch (childnode.Name)
-                {
-                    case "amount":
-                        {
-                            m_amount = Convert.ToInt32(childnode.InnerText);
-                            break;
-                        }
-                    case "discount":
-                        {
-                            m_discount = Convert.ToInt32(childnode.InnerText);
-                            break;
-                        }
-                    case "productsNotInRule":
-                        {
-                            FillList(m_productsNotInDiscount, childnode.InnerText);
-                            break;
-                        }
-                }
-
-            }
-        }
-        //заполнение списка типа string словами из строки line
-        void FillList(List<string> list, string line)
-        {
-            if (line != null && line.Length > 2)
-            {
-                string[] t = line.Split(' ');
-                foreach (string k in t)
-                {
-                    list.Add(k);
-                }
-                list.RemoveAt(0);
-                list.RemoveAt(list.Count - 1);
-
-            }
-        }
-        //получение скидки за выполнение данного правила
-        public float GetDiscount()
-        {
-            return m_discount;
-        }
-        
-        //проверка выполнения данного правила 
-        public void CheckRuleForAvailable(ShoppingCart products)
-        {
-            switch (m_rType)
-            {
-                case RuleType.BuyMoreThan:
-                    {
-                        if (products.GetProductAmount() >= m_amount)
-                        {
-                            products.SetDiscount(m_discount / 100, m_productsNotInDiscount);
-                        }
+                        availableProducts.Add(products[i]);
                         break;
                     }
-
-                case RuleType.BuyItAll:
-                    { 
-                        //проверка на наличие товаров участвующих в скидке
-                        while (isRuleAvailable(products, false))
-                        {
-                            //установление скидки на товары
-                            isRuleAvailable(products, true);
-                        }
-                        break;
-                    }
-            }
-        }
-
-        bool isRuleAvailable(ShoppingCart products, bool isMakeUsageInDiscount)
-        {
-            List<string> productNamesList = products.GetProductsNames();
-            int currentProduct = 0;
-
-            //проверка на вхождение имени продукта в список продуктов участвующих в скидке
-            for (int i = 0; i < m_productsInDiscount.Count; i++)
-            {
-                //переменная s хранит i-ый элемент списка скидочных продуктов
-                string s = m_productsInDiscount[i];
-                //поиск в списке продуктов из корзины наименование элемента s, который не участвует в скидке
-                for (int j = 0; j < productNamesList.Count; j++)
-                {
-                    if (productNamesList[j] == s && !products[j].GetUsageInDiscount())
-                    {
-                        if (isMakeUsageInDiscount)
-                        {
-                            //проверка на получение скидки для акций, в которых получают скидку не все товары
-                            if (isProductUseInDiscount(productNamesList[j]))
-                            {
-                                products[j].SetDiscount(m_discount / 100);
-                            }
-                            products[j].SetUsageInDiscount();
-                        }
-                        break;
-                    }
-                    if (j == productNamesList.Count - 1)
-                    {
-                        return false;
-                    }
-                }
-                currentProduct++;
-            }
-            return true;
-        }
-
-        bool isProductUseInDiscount(string pname)
-        {
-            foreach (string s in m_productsNotInDiscount)
-            {
-                if (s == pname)
-                {
-                    return false;
                 }
             }
-            return true;
+            //если все продукты участвующие в скидке находятся в списке найденных, то мы устанавливаем на них скидку
+            if (availableProducts.Count == m_productsInDiscount.Count)
+            {
+                foreach (Product p in availableProducts)
+                {
+                    p.SetDiscount(m_discount);
+                    p.SetUsageInDiscount();
+                }
+                //проверяем каждый продукт, на который установили скидку, накладывается на него скидка или нет
+                foreach (Product p in m_productsNotInDiscount)
+                {
+                    foreach (Product p2 in availableProducts)
+                    {
+                        if (p2.GetProductName() == p.GetProductName())
+                        {
+                            p2.SetDiscount(new IDiscount());
+                        }
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        //список продуктов, участвующих в акции
+        List<Product> m_productsInDiscount;
+    }
+    //класс скидок типа купи больше какого-то значения
+    public class RuleBuyMoreThan : IRule
+    {
+        //конструктор
+        public RuleBuyMoreThan(IDiscount discount, List<Product> productsNotInDiscount, int amount)
+        {
+            m_discount = discount;
+            m_productsNotInDiscount = productsNotInDiscount;
+            m_amount = amount;
+        }
+        //переопределенный метод установления скидок
+        public override void SetDiscountOnProducts(ref ShoppingCart cart)
+        {
+            if (cart.GetProductAmount() >= m_amount)
+            {
+                cart.SetDiscount(m_discount, m_productsNotInDiscount);
+                cart.SetProductsNotInDiscount(m_productsNotInDiscount);
+            }
         }
 
-        float m_discount;
         int m_amount;
-        RuleType m_rType;
-        public List<string> m_productsInDiscount;
-        List<string> m_productsNotInDiscount;
     }
 }

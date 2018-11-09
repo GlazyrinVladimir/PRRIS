@@ -14,11 +14,12 @@ namespace DiscountModuleForOnlineStore
             m_name = name;
             m_price = price;
             m_isUsageInDiscount = false;
+            m_currentDiscount = new IDiscount();
         }
         //получить цену продукта
         public float GetPrice()
         {
-            return m_price * (1 - m_currentDiscount);
+            return m_currentDiscount.GetPrice(m_price);
         }
         //установить, что продукт используется в скидке
         public void SetUsageInDiscount()
@@ -36,14 +37,14 @@ namespace DiscountModuleForOnlineStore
             return m_name;
         }
         //установить скидку на продукт
-        public void SetDiscount(float value)
+        public void SetDiscount(IDiscount discount)
         {
-            m_currentDiscount = value;
+            m_currentDiscount = discount;
         }
 
         string m_name;
         float m_price;
         bool m_isUsageInDiscount;
-        float m_currentDiscount = 0;
+        IDiscount m_currentDiscount;
     }
 }

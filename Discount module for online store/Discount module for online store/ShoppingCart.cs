@@ -6,76 +6,90 @@ using System.Threading.Tasks;
 
 namespace DiscountModuleForOnlineStore
 {
-    class ShoppingCart
+    public class ShoppingCart
     {
         //конструктор корзины
         public ShoppingCart()
         {
-            productsList = new List<Product>();
-            productsNamesList = new List<string>();
-            productsWithoutDiscount = new List<string>();
+            m_productsList = new List<Product>();
+            m_productsNamesList = new List<string>();
+            m_productsWithoutDiscount = new List<Product>();
+            m_discount = new IDiscount();
         }
         //добавить продукт в корзину
         public void Add(Product obj)
         {
             Product p = new Product(obj.GetProductName(), obj.GetPrice());
-            productsList.Add(p);
-            productsNamesList.Add(p.GetProductName());
+            m_productsList.Add(p);
+            m_productsNamesList.Add(p.GetProductName());
         }
         //получить количество продуктов в корзине
         public int GetProductAmount()
         {
-            return productsList.Count;
+            return m_productsList.Count;
         }
         //получить общую цену продуктов в корзине с учетом всех скидок
         public float GetProductsPrice()
         {
-            float value = 0;
-            foreach (Product p in productsList)
+            float valueProductsInDiscount = 0;
+            float valueProductsNotInDiscount = 0;
+
+            List<string> productsWithoutDiscountNames = new List<string>();
+
+            foreach (Product p in m_productsWithoutDiscount)
+            {
+                productsWithoutDiscountNames.Add(p.GetProductName());
+            }
+            
+            foreach (Product p in m_productsList)
             {
                 //проверка каждого продукта на участие в скидке
-                if (!productsWithoutDiscount.Contains(p.GetProductName()))
+                if (!productsWithoutDiscountNames.Contains(p.GetProductName()))
                 {
-                    Console.WriteLine(p.GetProductName() + " " + p.GetPrice() * (1 - m_discount));
-                    value += p.GetPrice() * (1 - m_discount);
+                    valueProductsInDiscount += p.GetPrice();
                 }
                 else
                 {
-                    Console.WriteLine(p.GetProductName() + " " + p.GetPrice());
-
-                    value += p.GetPrice();
+                    valueProductsNotInDiscount += p.GetPrice();
                 }
             }
-            return value;
+          
+            return m_discount.GetPrice(valueProductsInDiscount) + valueProductsNotInDiscount;
         }
         //индексация корзины, возврат продуктов по индексу добавления
         public Product this[int i]
         {
-            get { return productsList[i]; }
+            get { return m_productsList[i]; }
         }
         //получение наименований всех продуктов в корзине
         public List<string> GetProductsNames()
         {
-            return productsNamesList;
+            return m_productsNamesList;
         }
         //получение всех объектов класса продукты в корзине
         public List<Product> GetProductsList()
         {
-            return productsList;
+            return m_productsList;
         }
-        //установление скидки на продукты в корзине и списка продуктов, которые не участвуют в правиле
-        public void SetDiscount(float value, List<string> list)
+        //продукты не участвующие в акции
+        public void SetProductsNotInDiscount(List<Product> list)
         {
-            if (value > m_discount)
+            m_productsWithoutDiscount = list;
+        }
+
+        //установление скидки на продукты в корзине и списка продуктов, которые не участвуют в правиле
+        public void SetDiscount(IDiscount value, List<Product> list)
+        {
+            if (value.GetDiscount() > m_discount.GetDiscount())
             {
                 m_discount = value;
-                productsWithoutDiscount = list;
+                m_productsWithoutDiscount = list;
             }
         }
 
-        List<Product> productsList;
-        List<string> productsNamesList;
-        List<string> productsWithoutDiscount;
-        float m_discount = 0;
+        List<Product> m_productsList;
+        List<string> m_productsNamesList;
+        List<Product> m_productsWithoutDiscount;
+        IDiscount m_discount;
     }
 }

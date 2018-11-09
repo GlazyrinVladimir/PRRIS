@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Collections;
 using System.Xml;
+
 namespace DiscountModuleForOnlineStore
 {
     public class Shop
@@ -13,30 +14,20 @@ namespace DiscountModuleForOnlineStore
         //конструктор магазина
         public Shop()
         {
-            m_shopRules = new List<Rule>();
+            rulesController = new RulesController();
             m_shoppingCart = new ShoppingCart();
-            LoadRules();
         }
-        //получение всех правил из xml файла
-        void LoadRules()
+        //добавление нового правило в объект rulesController
+        public void AddRule(IRule rule)
         {
-            XmlDocument xDoc = new XmlDocument();
-            xDoc.Load("../../rules.xml");
-            XmlElement xRoot = xDoc.DocumentElement;
-            foreach (XmlNode xnode in xRoot)
-            {
-                Rule r = new Rule(xnode);
-                m_shopRules.Add(r);
-            }
+            rulesController.AddRule(rule);
         }
+
         //получение итоговой цены продуктов с учетом скидок, проверка каждого правила скидок
         public float GetSummaryPrice()
         {
-            foreach(Rule r in m_shopRules)
-            {
-                r.CheckRuleForAvailable(m_shoppingCart);                
-            }
-            return (float)Math.Round(m_shoppingCart.GetProductsPrice(), 2);// Math.Round(m_shoppingCart.GetProductsPrice(), 2);
+            rulesController.SetAllDiscounts(ref m_shoppingCart);
+            return (float)Math.Round(m_shoppingCart.GetProductsPrice(), 2);
         }
         //добавление продукта в объект корзины
         public void AddProductToShoppingCart(Product p)
@@ -44,8 +35,8 @@ namespace DiscountModuleForOnlineStore
             m_shoppingCart.Add(p);
         }
 
-        List<Rule> m_shopRules;
         ShoppingCart m_shoppingCart;
+        RulesController rulesController;
     }
 
 }

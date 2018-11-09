@@ -9,32 +9,6 @@ class Program
 {
     static void Main(string[] args)
     {
-        //создание обьектов продукты
-        Product A = new Product("A", 10);
-        Product B = new Product("B", 20);
-        Product C = new Product("C", 3);
-        Product D = new Product("D", 30);
-        Product E = new Product("E", 15);
-        Product F = new Product("F", 25);
-        Product G = new Product("G", 34);
-        Product K = new Product("K", 37);
-        Product L = new Product("L", 11);
-        Product M = new Product("M", 17);
-
-        //создание объекта магазина
-        Shop shop = new Shop();
-
-        //пример добавления продуктов в корзину
-        shop.AddProductToShoppingCart(A);
-        shop.AddProductToShoppingCart(A);
-        shop.AddProductToShoppingCart(B);
-        shop.AddProductToShoppingCart(B);
-        shop.AddProductToShoppingCart(A);
-
-        //получение цены продуктов с учетом скидок
-        float price = shop.GetSummaryPrice();
-        Console.WriteLine(price);
-
         Console.ReadKey();
     }
 }
