@@ -13,6 +13,7 @@ namespace algorithmic_task_2
         {
             m_topParent = new Root(' ', null); 
         }
+
         //добавление нового корня
         public void AddChild(string value)
         {
@@ -28,6 +29,9 @@ namespace algorithmic_task_2
                 {
                     Root child = new Root(c, currentParent);
                     currentParent.SetChild(child);
+
+                    
+
                     currentParent = child;
                 }
                 //иначе смещаемся вниз по дереву и меняем родителя
@@ -37,13 +41,13 @@ namespace algorithmic_task_2
                 }
                 
             }
-            //последнюю букву отмечаем как концом слова
-            currentParent.SetWordEnd();
+            //последнюю букву отмечаем концом слова
+            currentParent.SetWordEnd();    
         }
-        //получение всех количества слова начинающиеся на переменную word
+
+        //получение всех слов начинающихся на переменную word
         public int GetValueOfWordIncidence(string word)
         {
-            int count = 0;
             Root currentParent = m_topParent;
             //продвигаемся по дереву через корни соответствующей буквы из переменной word, если корень с такой буквой не существует, следовательно возвращаем 0
             foreach (char c in word)
@@ -55,7 +59,11 @@ namespace algorithmic_task_2
 
                 currentParent = child;
             }
-
+            int count = 0;
+            //если данный корень является окончанием слова, увеличиваем счетчик
+            if (currentParent.IsCurrentRootWordEnd())           
+                count++;
+            //добавляем к счетчику количество слов, начинающихся на переменную word
             count += currentParent.GetAllWordsEndInBranch();        
             return count;
         }

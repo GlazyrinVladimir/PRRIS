@@ -28,7 +28,7 @@ namespace algorithmic_task_2
             string a14 = "akakii";
             string a15 = "julia";
 
-            string b = "al";
+            string b = "alex";
 
             //создаем объект типа записная книжка и добавляем новые записи
             Notebook notebook = new Notebook();

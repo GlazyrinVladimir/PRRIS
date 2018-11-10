@@ -14,6 +14,7 @@ namespace algorithmic_task_2
             m_childs = new List<Root>();
             m_value = value;
             m_parent = parent;
+            m_childsWordEndsCount = 0;
         }
 
         //возвращаем все следующие корни, текущего корня
@@ -51,6 +52,8 @@ namespace algorithmic_task_2
         public void SetWordEnd()
         {
             m_isWordEnd = true;
+            //данный корень заканчивается словом, поэтому у родителя увеличиваем счетчик
+            m_parent.AddNewChildWordEnd();
         }
 
         //возврат значения определяющее конец слова
@@ -63,16 +66,25 @@ namespace algorithmic_task_2
         public int GetAllWordsEndInBranch()
         {
             int count = 0;
-            if (m_isWordEnd)
-                count++;
+            count += m_childsWordEndsCount;
 
             foreach (Root child in m_childs)
             {
                 count += child.GetAllWordsEndInBranch();
             }
-
-
             return count;
+        }
+
+        //возврат значения переменной о окончании на данном корне слова
+        public bool IsCurrentRootWordEnd()
+        {
+            return m_isWordEnd;
+        }
+
+        //увеличение счетчика на 1, потому что оканчивается слово на ребенке данного корня
+        void AddNewChildWordEnd()
+        {
+            m_childsWordEndsCount++;
         }
 
         //буква хранимая в корне
@@ -83,5 +95,7 @@ namespace algorithmic_task_2
         List<Root> m_childs;
         //переменная определяющая окончание слова
         bool m_isWordEnd = false;
+        //переменная счетчик, хранит информацию о количестве детей, на которых оканчивается слово
+        int m_childsWordEndsCount;
     }
 }

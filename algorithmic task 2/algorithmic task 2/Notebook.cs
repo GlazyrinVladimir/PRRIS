@@ -13,6 +13,7 @@ namespace algorithmic_task_2
         {
             m_tree = new Tree();
         }
+
         //добавление новой записи
         public void Add(string name)
         {
