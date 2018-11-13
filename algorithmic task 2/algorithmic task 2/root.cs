@@ -52,8 +52,13 @@ namespace algorithmic_task_2
         public void SetWordEnd()
         {
             m_isWordEnd = true;
-            //данный корень заканчивается словом, поэтому у родителя увеличиваем счетчик
-            m_parent.AddNewChildWordEnd();
+            Root parent = m_parent;
+            //увеличиваем счетчики количества слов всех верхних корней
+            while (parent != null)
+            {
+                parent.m_childsWordEndsCount++;
+                parent = parent.m_parent;
+            }
         }
 
         //возврат значения определяющее конец слова
@@ -80,11 +85,10 @@ namespace algorithmic_task_2
         {
             return m_isWordEnd;
         }
-
-        //увеличение счетчика на 1, потому что оканчивается слово на ребенке данного корня
-        void AddNewChildWordEnd()
+        //возврат количества детей, на которых оканчивается слово
+        public int GetChildsWordEndsCount()
         {
-            m_childsWordEndsCount++;
+            return m_childsWordEndsCount;
         }
 
         //буква хранимая в корне

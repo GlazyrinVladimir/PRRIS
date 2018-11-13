@@ -28,18 +28,14 @@ namespace algorithmic_task_2
                 if (nextChild == null)
                 {
                     Root child = new Root(c, currentParent);
-                    currentParent.SetChild(child);
-
-                    
-
+                    currentParent.SetChild(child);                  
                     currentParent = child;
                 }
                 //иначе смещаемся вниз по дереву и меняем родителя
                 else
                 {
                     currentParent = nextChild;
-                }
-                
+                }                
             }
             //последнюю букву отмечаем концом слова
             currentParent.SetWordEnd();    
@@ -52,19 +48,18 @@ namespace algorithmic_task_2
             //продвигаемся по дереву через корни соответствующей буквы из переменной word, если корень с такой буквой не существует, следовательно возвращаем 0
             foreach (char c in word)
             {
-                Root child = currentParent.FindByValue(c);   
-                
+                Root child = currentParent.FindByValue(c);
+
                 if (child == null)
                     return 0;
 
                 currentParent = child;
             }
-            int count = 0;
-            //если данный корень является окончанием слова, увеличиваем счетчик
-            if (currentParent.IsCurrentRootWordEnd())           
+
+            int count = currentParent.GetChildsWordEndsCount();
+            if (currentParent.IsCurrentRootWordEnd())
                 count++;
-            //добавляем к счетчику количество слов, начинающихся на переменную word
-            count += currentParent.GetAllWordsEndInBranch();        
+
             return count;
         }
 
