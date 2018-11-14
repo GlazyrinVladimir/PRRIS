@@ -15,7 +15,7 @@ namespace DiscountModuleForOnlineStore
         public Shop()
         {
             rulesController = new RulesController();
-            m_shoppingCart = new ShoppingCart();
+            m_shoppingCart = new ShoppingCart(new CartContent(), new CartDiscount());
         }
         //добавление нового правило в объект rulesController
         public void AddRule(IRule rule)
@@ -29,7 +29,7 @@ namespace DiscountModuleForOnlineStore
             rulesController.SetAllDiscounts(ref m_shoppingCart);
             return (float)Math.Round(m_shoppingCart.GetProductsPrice(), 2);
         }
-
+        //добавление продукта в корзину с продуктами
         public void AddProductToShoppingCart(Product p)
         {
             m_shoppingCart.m_cartContent.Add(p);

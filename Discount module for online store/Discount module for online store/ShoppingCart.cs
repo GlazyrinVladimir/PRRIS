@@ -12,10 +12,10 @@ namespace DiscountModuleForOnlineStore
         public ICartContent m_cartContent { get; set; }
 
         //конструктор корзины
-        public ShoppingCart()
+        public ShoppingCart(ICartContent cartCont, ICartDiscount cartDis)
         {
-            m_cartContent = new CartContent();
-            m_discount = new CartDiscount();
+            m_cartContent = cartCont;
+            m_discount = cartDis;
         }
 
         //получить общую цену продуктов в корзине с учетом всех скидок
@@ -46,17 +46,22 @@ namespace DiscountModuleForOnlineStore
             return m_discount.GetPriceWithDiscount(valueProductsInDiscount) + valueProductsNotInDiscount;
         }
     }
-
+    //интерфейс cкидок для корзины
     public interface ICartDiscount
-    {
+    {        
+        //установление скидки на продукты в корзине и списка продуктов, которые не участвуют в правиле
         void SetDiscount(IDiscount value, List<Product> list);
+        //продукты не участвующие в акции
         void SetProductsNotInDiscount(List<Product> list);
+        //получение списка продуктов без скидок
         List<Product> GetProductsWithountDiscount();
+        //получение цены продуктов со скидкой
         float GetPriceWithDiscount(float price);
     }
-
+    //реализация интерфейса скидок для корзины
     public class CartDiscount : ICartDiscount
     {
+        //конструктор
         public CartDiscount()
         {
             m_productsWithoutDiscount = new List<Product>();
@@ -76,12 +81,12 @@ namespace DiscountModuleForOnlineStore
         {
             m_productsWithoutDiscount = list;
         }
-
+        //получение списка продуктов без скидок
         public List<Product> GetProductsWithountDiscount()
         {
             return m_productsWithoutDiscount;
         }
-
+        //получение цены продуктов со скидкой
         public float GetPriceWithDiscount(float price)
         {
             return m_discount.GetPrice(price);
@@ -90,17 +95,22 @@ namespace DiscountModuleForOnlineStore
         List<Product> m_productsWithoutDiscount;
         IDiscount m_discount;
     }
-
+    //интерфейс товаров в корзине
     public interface ICartContent
-    {
+    {        
+        //получение наименований всех продуктов в корзине
         List<string> GetProductsNamesList();
+        //получение всех объектов класса продукты в корзине
         List<Product> GetProductsList();
+        //получить количество продуктов в корзине
         int GetProductAmount();
+        //добавить продукт в корзину
         void Add(Product obj);
     }
-
+    //реализация интерфейса товаров в корзине
     public class CartContent : ICartContent
     {
+        //конструктор
         public CartContent()
         {
             m_productsList = new List<Product>();
@@ -139,6 +149,4 @@ namespace DiscountModuleForOnlineStore
         List<Product> m_productsList;
         List<string> m_productsNamesList;
     }
-
-    //содержимое корзины, скидка на корзину, общая цена корзины
 }

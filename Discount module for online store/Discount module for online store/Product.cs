@@ -23,7 +23,7 @@ namespace DiscountModuleForOnlineStore
         {
             return p_discount.GetPrice(m_price.GetValue());
         }
-
+        //получение объекта текущей валюты
         public ICurrency GetCurrencyPrice()
         {
             return m_price;
@@ -38,7 +38,7 @@ namespace DiscountModuleForOnlineStore
         string m_name;
         ICurrency m_price;
     }
-
+    //интерфейс скидок в продуктах
     public interface IProductDiscount
     {
         //установить скидку на продукт
@@ -49,12 +49,13 @@ namespace DiscountModuleForOnlineStore
 
         //получить используется ли продукт в скидке
         bool GetUsageInDiscount(Product p);
-
+        //получение цены
         float GetPrice(float price);
     }
-
+    //реализация интерфейса скидок в продуктах
     public class ProductDiscount : IProductDiscount
     {
+        //конструктор
         public ProductDiscount()
         {
             m_isUsageInDiscount = false;
@@ -77,7 +78,7 @@ namespace DiscountModuleForOnlineStore
         {
             return m_isUsageInDiscount;
         }
-        
+        //получение цены
         public float GetPrice(float price)
         {
             return m_currentDiscount.GetPrice(price);
