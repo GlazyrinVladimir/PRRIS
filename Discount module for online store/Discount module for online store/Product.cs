@@ -8,42 +8,81 @@ namespace DiscountModuleForOnlineStore
 {
     public class Product
     {
+        public IProductDiscount p_discount { get; set; }
+
         //конструктор нового продукта
-        public Product(string name, float price)
+        public Product(string name, ICurrency price, IProductDiscount pd)
         {
             m_name = name;
             m_price = price;
-            m_isUsageInDiscount = false;
-            m_currentDiscount = new IDiscount();
+            p_discount = pd;
         }
+
         //получить цену продукта
         public float GetPrice()
         {
-            return m_currentDiscount.GetPrice(m_price);
+            return p_discount.GetPrice(m_price.GetValue());
         }
-        //установить, что продукт используется в скидке
-        public void SetUsageInDiscount()
+
+        public ICurrency GetCurrencyPrice()
         {
-            m_isUsageInDiscount = true;
+            return m_price;
         }
-        //получить используется ли продукт в скидке
-        public bool GetUsageInDiscount()
-        {
-            return m_isUsageInDiscount;
-        }
+
         //получить наименование продукта
         public string GetProductName()
         {
             return m_name;
         }
+
+        string m_name;
+        ICurrency m_price;
+    }
+
+    public interface IProductDiscount
+    {
         //установить скидку на продукт
-        public void SetDiscount(IDiscount discount)
+        void SetDiscount(Product p, IDiscount discount);
+
+        //установить, что продукт используется в скидке
+        void SetUsageInDiscount();
+
+        //получить используется ли продукт в скидке
+        bool GetUsageInDiscount(Product p);
+
+        float GetPrice(float price);
+    }
+
+    public class ProductDiscount : IProductDiscount
+    {
+        public ProductDiscount()
+        {
+            m_isUsageInDiscount = false;
+            m_currentDiscount = new IDiscount();
+        }
+        //установить скидку на продукт
+        public void SetDiscount(Product p, IDiscount discount)
         {
             m_currentDiscount = discount;
         }
 
-        string m_name;
-        float m_price;
+        //установить, что продукт используется в скидке
+        public void SetUsageInDiscount()
+        {
+            m_isUsageInDiscount = true;
+        }
+
+        //получить используется ли продукт в скидке
+        public bool GetUsageInDiscount(Product p)
+        {
+            return m_isUsageInDiscount;
+        }
+        
+        public float GetPrice(float price)
+        {
+            return m_currentDiscount.GetPrice(price);
+        }
+
         bool m_isUsageInDiscount;
         IDiscount m_currentDiscount;
     }

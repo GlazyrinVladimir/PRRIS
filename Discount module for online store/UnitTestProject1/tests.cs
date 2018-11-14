@@ -232,15 +232,34 @@ namespace UnitTestProject1
             Assert.AreEqual(expected, actual);
         }
 
-        Product A = new Product("A", 10);
-        Product B = new Product("B", 20);
-        Product C = new Product("C", 3);
-        Product D = new Product("D", 30);
-        Product E = new Product("E", 15);
-        Product F = new Product("F", 25);
-        Product G = new Product("G", 34);
-        Product K = new Product("K", 37);
-        Product L = new Product("L", 11);
-        Product M = new Product("M", 17);
+        [TestMethod]
+        public void TestRule10_AABBA_more5_Percent_ToDollars()
+        {
+            float expected = 0.84f;
+
+            Shop shop = new Shop();
+            AddRules(ref shop);
+            shop.AddProductToShoppingCart(A);
+            shop.AddProductToShoppingCart(A);
+            shop.AddProductToShoppingCart(B);
+            shop.AddProductToShoppingCart(B);
+            shop.AddProductToShoppingCart(A);
+
+            CurrencyRub rub = new CurrencyRub(shop.GetSummaryPrice());
+            float actual = (float)Math.Round(rub.Convert(rub, new CurrencyDollar()), 2);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        Product A = new Product("A", new CurrencyRub(10), new ProductDiscount());
+        Product B = new Product("B", new CurrencyRub(20), new ProductDiscount());
+        Product C = new Product("C", new CurrencyRub(3), new ProductDiscount());
+        Product D = new Product("D", new CurrencyRub(30), new ProductDiscount());
+        Product E = new Product("E", new CurrencyRub(15), new ProductDiscount());
+        Product F = new Product("F", new CurrencyRub(25), new ProductDiscount());
+        Product G = new Product("G", new CurrencyRub(34), new ProductDiscount());
+        Product K = new Product("K", new CurrencyRub(37), new ProductDiscount());
+        Product L = new Product("L", new CurrencyRub(11), new ProductDiscount());
+        Product M = new Product("M", new CurrencyRub(17), new ProductDiscount());
     }
 }

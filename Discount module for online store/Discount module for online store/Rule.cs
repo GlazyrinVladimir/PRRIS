@@ -61,7 +61,7 @@ namespace DiscountModuleForOnlineStore
         //проверка на выполнение правила для данной корзины
         bool isRuleAvailable(ref ShoppingCart cart)
         {
-            List<Product> products = cart.GetProductsList();
+            List<Product> products = cart.m_cartContent.GetProductsList();
             //список для хранения объектов продуктов, которые участвуют в скидке
             List<Product> availableProducts = new List<Product>();
             //каждый продукт из списка продуктов участвующих в скидке
@@ -71,7 +71,7 @@ namespace DiscountModuleForOnlineStore
                 for (int i = 0; i < products.Count; i++)
                 {
                     //сравниваются, если это одинаковые продукты и продукт из корзины не участвует в акции, то его добавляем в список
-                    if (p.GetProductName() == products[i].GetProductName() && !products[i].GetUsageInDiscount())
+                    if (p.GetProductName() == products[i].GetProductName() && !products[i].p_discount.GetUsageInDiscount(products[i]))
                     {
                         availableProducts.Add(products[i]);
                         break;
@@ -83,8 +83,8 @@ namespace DiscountModuleForOnlineStore
             {
                 foreach (Product p in availableProducts)
                 {
-                    p.SetDiscount(m_discount);
-                    p.SetUsageInDiscount();
+                    p.p_discount.SetDiscount(p, m_discount);
+                    p.p_discount.SetUsageInDiscount();
                 }
                 //проверяем каждый продукт, на который установили скидку, накладывается на него скидка или нет
                 foreach (Product p in m_productsNotInDiscount)
@@ -93,7 +93,7 @@ namespace DiscountModuleForOnlineStore
                     {
                         if (p2.GetProductName() == p.GetProductName())
                         {
-                            p2.SetDiscount(new IDiscount());
+                            p2.p_discount.SetDiscount(p2, new IDiscount());
                         }
                     }
                 }
@@ -117,10 +117,10 @@ namespace DiscountModuleForOnlineStore
         //переопределенный метод установления скидок
         public override void SetDiscountOnProducts(ref ShoppingCart cart)
         {
-            if (cart.GetProductAmount() >= m_amount)
+            if (cart.m_cartContent.GetProductAmount() >= m_amount)
             {
-                cart.SetDiscount(m_discount, m_productsNotInDiscount);
-                cart.SetProductsNotInDiscount(m_productsNotInDiscount);
+                cart.m_discount.SetDiscount(m_discount, m_productsNotInDiscount);
+                cart.m_discount.SetProductsNotInDiscount(m_productsNotInDiscount);
             }
         }
 

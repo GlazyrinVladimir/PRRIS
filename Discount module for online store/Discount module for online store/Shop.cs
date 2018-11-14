@@ -29,14 +29,13 @@ namespace DiscountModuleForOnlineStore
             rulesController.SetAllDiscounts(ref m_shoppingCart);
             return (float)Math.Round(m_shoppingCart.GetProductsPrice(), 2);
         }
-        //добавление продукта в объект корзины
+
         public void AddProductToShoppingCart(Product p)
         {
-            m_shoppingCart.Add(p);
+            m_shoppingCart.m_cartContent.Add(p);
         }
 
         ShoppingCart m_shoppingCart;
         RulesController rulesController;
     }
-
 }
